@@ -1,0 +1,125 @@
+{% extends "admin/base2.html" %}
+{% block body %}
+    <body>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row">
+            <form class="layui-form">
+
+ <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>StageName
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.StageName" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="x-red">*</span>Event
+                    </label>
+                    <div class="layui-input-inline">
+ <el-select style="width: 220px;" size="mini" v-model="datas.EventID"
+                                           placeholder="select event">
+                                    <el-option
+                                            v-for="item in event"
+                                            :label="item.EventName"
+                                            :value="item.EventID">
+                                    </el-option>
+                                </el-select>
+                    </div>
+
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>Location
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.Location" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+                 <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>StageDate
+                    </label>
+                    <div class="layui-input-inline">
+<el-date-picker style="width: 150px;"
+        v-model="datas.StageDate"
+        type="date"
+
+        size="mini"
+      />
+                    </div>
+                </div>
+
+
+                 <div class="layui-form-item" class="layui-input-inline">
+                    <label  class="layui-form-label" style="display:inline-block;margin-top: -10px;">
+                        <span class="x-red">*</span>Qualifying
+                    </label>
+                    <div class="layui-input-inline">
+  <el-switch
+    v-model="datas.Qualifying"
+
+
+  />
+                    </div>
+                </div>
+
+ <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red"></span>PointsToQualify
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.PointsToQualify" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="margin-top: 50px;">
+                    <label  class="layui-form-label">
+                    </label>
+                    <div>
+                           <el-button type="primary" round size="mini" style="width: 80px;" @click="add_one">
+                    save
+                </el-button>
+                <el-button type="warning" round size="mini" style="width: 80px;" @click="close">
+                    close
+                </el-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        App.data = function data() {
+            return {
+                datas: {
+                    StageName: "",
+                    EventID: "",
+                    Location: "",
+                    StageDate:"",
+                    Qualifying:false,
+                    PointsToQualify:""
+                },
+                tablename:"event_stage",
+                event: {{event|safe}}
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+
+    
+        App.methods = {
+
+
+        }
+    </script>
+
+    </body>
+
+{% endblock %}

@@ -1,0 +1,241 @@
+
+{% extends "admin/base.html" %}
+{% block body %}
+
+
+    <div class="layui-fluid" id="app">
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body ">
+
+
+                    </div>
+                    <div class="layui-card-body">
+
+                        <div class="layui-inline layui-show-xs-block" style="margin-right: 10px;">
+                            <input type="text" name="username" id="username" placeholder="input event name"
+                                   autocomplete="off"
+                                   v-model="keywords"
+                                   class="layui-input" style="width: 180px;display: inline-block;margin-right: 5px;">
+
+                               <button class="layui-btn" @click="serch"><i class="layui-icon">&#xe615;</i>
+                            </button>
+                              <a class="layui-btn layui-btn-small" onclick="location.href='/admin/event_list?page=1'"
+                               title="rush">
+                                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+                        {% if session.userinfo.Type == 'admin' %}
+                            <button class="layui-btn" onclick="xadmin.open('add event','/admin/event_add',380,400)"><i
+                                class="layui-icon"></i>add event
+                        </button>
+                            {% endif %}
+
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="layui-card-body ">
+
+
+                            <el-table
+                                    :data="tableData"
+                                    :row-style="{height:45+'px'}"
+                                    :cell-style="{padding:1+'px'}"
+                                    size="mini"
+
+                                    :row-key="getRowKeys"
+                                    border>
+
+                                <template v-for="item in header">
+                                    <el-table-column :property="item.field"
+                                                     v-if="item.show" :label="item.key"
+                                                     align="center" :width="item.width" :show-overflow-tooltip='true'
+
+                                    >
+
+
+                                        <template #default="scope">
+                                            <span v-else> {[scope.row[scope.column.property]]} </span>
+
+                                        </template>
+
+                                    </el-table-column>
+
+
+                                </template>
+
+                                {#fixed="right"#}
+                                {% if session.userinfo.Type == 'admin' %}
+                                <el-table-column label=" " align="center"  min-width=220>
+                                    <template #default="scope">
+
+
+                                        <el-button
+                                                size="mini"
+                                                @click="handleEdit('edit','/admin/event_edit?id='+scope.row[idname],400,450)">edit
+                                        </el-button>
+                                        <el-button
+                                                size="mini"
+                                                type="danger"
+                                                :disabled="isdel"
+                                                @click="handleDelete(scope.$index,scope.row[idname]);">delete
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                                {% endif %}
+                            </el-table>
+
+
+                        </div>
+                        <!--分页-->
+                        <div class="page-bar">
+                            <ul>
+                                <li v-if="cur>1"><a @click="cur--,pageClick()">previous</a></li>
+                                <li v-if="cur==1"><a class="banclick">previous</a></li>
+                                <li v-for="index in indexs" :class="{ 'active': cur == index}">
+                                    <a @click="btnClick(index)">{[ index ]}</a>
+                                </li>
+                                <li v-if="cur!=all"><a @click="cur++,pageClick()">next</a></li>
+                                <li v-if="cur == all"><a class="banclick">next</a></li>
+                                <li><a><i>{[ totalPage ]}</i> record  <i>{[ all ]}</i>pages</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="page">
+                            <div>
+
+
+                                {{ page }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+
+
+        App.data = function data() {
+            return {
+                all: {{pages}}, //total pages
+                cur: {{cur}},//current page
+                totalPage: {{total}},//current
+                keywords: "",
+                header: [
+                    {key: 'EventID', field: 'EventID', width: 100, show: 'true'},
+                    {key: 'EventName', field: 'EventName', width: 280, show: 'true'},
+                    {key: 'Sport', field: 'Sport', width: 170, show: 'true'},
+                    {key: 'TeamName', field: 'TeamName', width: 200, show: 'true'},
+
+
+
+                ],
+                tableData: {{ tb |safe}},
+                idname:"EventID",
+                tablename:"events_view"
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+        //method
+        App.methods = {
+
+
+
+
+
+            getRowKeys(row) {
+                return row.id
+            },
+
+            //search
+            serch() {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: 1
+
+                }
+                axios({
+                    url: '/admin/eventlistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+                        console.log(obj)
+                        that.tableData = obj.data['rs']
+                        that.alldata = obj.data['rsall']
+                        that.all = obj.data['pages'], //all pages
+                            that.cur = obj.data['cur'],//current page
+                            that.totalPage = obj.data['total']//current
+
+
+                    })
+
+            },
+
+
+            //request data
+            dataListFn(index) {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: index
+
+                }
+
+                axios({
+                    url: '/admin/eventlistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+                        //console.log(obj)
+
+                        that.tableData = obj.data['rs']
+                        that.all = obj.data['pages'], //all pages
+                            that.cur = obj.data['cur'],//current page
+                            that.totalPage = obj.data['total']//current
+
+
+                    })
+            },
+            //separate pages
+            btnClick(data) {//click page
+                if (data != this.cur) {
+                    this.cur = data
+                }
+
+            //request by click
+                this.dataListFn(this.cur.toString());
+            },
+            pageClick() {
+                //equest by click
+                this.dataListFn(this.cur.toString());
+            }
+
+
+
+        }
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% block body %}
+    <body>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row">
+            <form class="layui-form">
+
+
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>TeamtName
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.TeamName" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="layui-form-item" style="margin-top: 30px;">
+                    <label for="L_repass" class="layui-form-label">
+                    </label>
+                    <div >
+                        <el-button type="primary" round size="mini" style="width: 80px;" @click="add_one">save</el-button>
+                <el-button type="warning" round size="mini" style="width: 80px;" @click="close">
+                    close
+                </el-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        App.data = function data() {
+            return {
+
+                datas: {
+                    TeamName: ""
+                },
+                tablename:"teams"
+
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+
+        //方法
+        App.methods = {
+
+
+        }
+    </script>
+
+    </body>
+
+{% endblock %}

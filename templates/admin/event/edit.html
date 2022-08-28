@@ -1,0 +1,92 @@
+{% extends "admin/base.html" %}
+{% block body %}
+    <body>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row">
+            <form class="layui-form">
+
+
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>EventName
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.EventName" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>Sport
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.Sport" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+
+
+          <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="x-red">*</span>NZTeam
+                    </label>
+                    <div class="layui-input-inline">
+ <el-select style="width: 220px;" size="mini" v-model="datas.NZTeam"
+                                           placeholder="select team">
+                                    <el-option
+                                            v-for="item in team"
+                                            :label="item.TeamName"
+                                            :value="item.TeamID">
+                                    </el-option>
+                                </el-select>
+                    </div>
+
+                </div>
+
+
+
+                <div class="layui-form-item" style="margin-top: 50px;">
+                    <label  class="layui-form-label">
+                    </label>
+                    <div>
+                           <el-button type="primary" round size="mini" style="width: 80px;" @click="edit_one">
+                    save
+                </el-button>
+                <el-button type="warning" round size="mini" style="width: 80px;" @click="close">
+                    close
+                </el-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        App.data = function data() {
+            return {
+
+                datas: {{ datas|safe }},
+
+
+                team: {{team|safe}},
+                tablename:"events",
+                idname:"EventID"
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+
+        //method
+        App.methods = {
+
+
+        }
+    </script>
+
+    </body>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+<div class="left-nav" style="background: #eaf3fa;">
+    <div id="side-nav">
+        <ul id="nav">
+
+            <!-- management -->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="Consigned Machine Qty Management">&#xe6ab;</i>
+                    <cite>Event Management</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <!--menu -->
+                <ul class="sub-menu">
+
+
+
+                    <li>
+                        <a onclick="xadmin.add_tab('Events','/admin/event_list?page=1')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>Events</cite></a>
+                    </li>
+
+                    <li>
+                        <a onclick="xadmin.add_tab('Event_stage','/admin/stage_list?page=1')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>Event Stage</cite></a>
+                    </li>
+                     <li>
+                        <a onclick="xadmin.add_tab('Event Stage Results','/admin/result_list?page=1')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>Event Stage Results</cite></a>
+                    </li>
+
+
+
+
+
+                </ul>
+            </li>
+
+
+
+
+
+{% if session.userinfo.Type == 'admin' %}
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="System management">&#xe6b8;</i>
+                        <cite>Member Management</cite>
+                        <i class="iconfont nav_right">&#xe697;</i></a>
+                    <ul class="sub-menu">
+
+                        <li>
+                            <a onclick="xadmin.add_tab('Members','/admin/member_list?page=1')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Members</cite></a>
+                        </li>
+ <li>
+                            <a onclick="xadmin.add_tab('Teams','/admin/team_list?page=1')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Teams</cite></a>
+                        </li>
+
+
+
+
+
+
+                    </ul>
+                </li>
+{% endif %}
+
+
+
+        </ul>
+    </div>
+</div>

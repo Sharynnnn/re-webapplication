@@ -1,0 +1,103 @@
+{% extends "admin/base2.html" %}
+{% block body %}
+    <body>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row">
+                <form class="layui-form">
+    <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="x-red">*</span>Stage
+                    </label>
+                    <div class="layui-input-inline">
+ <el-select style="width: 300px;" size="mini" v-model="datas.StageID"
+                                           placeholder="select Stage">
+                                    <el-option
+                                            v-for="item in stageview"
+                                            :label="item.Sname"
+                                            :value="item.StageID">
+                                    </el-option>
+                                </el-select>
+                    </div>
+
+                </div>
+
+                   <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="x-red">*</span>Member
+                    </label>
+                    <div class="layui-input-inline">
+ <el-select style="width: 250px;" size="mini" v-model="datas.MemberID"
+                                           placeholder="select member">
+                                    <el-option
+                                            v-for="item in member"
+                                            :label="item.Name"
+                                            :value="item.MemberID">
+                                    </el-option>
+                                </el-select>
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>PointsScored
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.PointsScored" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+                 <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>Position
+                    </label>
+                   <div class="layui-input-inline">
+<el-input v-model="datas.Position" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+
+
+                <div class="layui-form-item" style="margin-top: 50px;">
+                    <label  class="layui-form-label">
+                    </label>
+                    <div>
+                           <el-button type="primary" round size="mini" style="width: 80px;" @click="edit_one">
+                    save
+                </el-button>
+                <el-button type="warning" round size="mini" style="width: 80px;" @click="close">
+                    close
+                </el-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        App.data = function data() {
+            return {
+
+                datas: {{ datas|safe }},
+                 tablename:"event_stage_results",
+                stageview: {{stageview|safe}},
+                member: {{member|safe}},
+                idname:"ResultID"
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+
+        //method
+        App.methods = {
+
+
+        }
+    </script>
+
+    </body>
+
+{% endblock %}

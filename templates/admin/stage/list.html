@@ -1,0 +1,246 @@
+
+{% extends "admin/base.html" %}
+{% block body %}
+
+
+    <div class="layui-fluid" id="app">
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body ">
+
+
+                    </div>
+                    <div class="layui-card-body">
+
+                        <div class="layui-inline layui-show-xs-block" style="margin-right: 10px;">
+                            <input type="text" name="username" id="username" placeholder="input event name or team name"
+                                   autocomplete="off"
+                                   v-model="keywords"
+                                   class="layui-input" style="width: 250px;display: inline-block;margin-right: 5px;">
+
+                               <button class="layui-btn" @click="serch"><i class="layui-icon">&#xe615;</i>
+                            </button>
+                              <a class="layui-btn layui-btn-small" onclick="location.href='/admin//stage_list?page=1'"
+                               title="rush">
+                                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+{% if session.userinfo.Type == 'admin' %}
+                            <button class="layui-btn" onclick="xadmin.open('add stage','/admin/stage_add',480,500)"><i
+                                class="layui-icon"></i>add stage
+                        </button>
+                            {% endif %}
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="layui-card-body ">
+
+
+                            <el-table
+                                    :data="tableData"
+                                    :row-style="{height:45+'px'}"
+                                    :cell-style="{padding:1+'px'}"
+                                    size="mini"
+
+                                    :row-key="getRowKeys"
+                                    border>
+
+                                <template v-for="item in header">
+                                    <el-table-column #default="scope" :property="item.field"
+                                                     :label="item.key"
+                                                     align="center" :width="item.width" :show-overflow-tooltip='true'
+                                                     :sortable="item.sort"
+
+                                    >
+
+                                            <span v-if="item.key=='Qualifying' && scope.row[item.key] == 1">yes</span>
+<span v-else-if="item.key=='Qualifying' && scope.row[item.key] == 0">no</span>
+                                            <span v-else> {[scope.row[scope.column.property]]} </span>
+
+
+
+                                    </el-table-column>
+
+
+                                </template>
+
+                                {#fixed="right"#}
+                                {% if session.userinfo.Type == 'admin' %}
+                                <el-table-column label=" " align="center"  min-width=220>
+                                    <template #default="scope">
+
+
+                                        <el-button
+                                                size="mini"
+                                                @click="handleEdit('edit','/admin/stage_edit?id='+scope.row[idname],400,450)">edit
+                                        </el-button>
+                                        <el-button
+                                                size="mini"
+                                                type="danger"
+                                                :disabled="isdel"
+                                                @click="handleDelete(scope.$index,scope.row[idname]);">delete
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                                {% endif %}
+                            </el-table>
+
+
+                        </div>
+                        <!--分页-->
+                        <div class="page-bar">
+                            <ul>
+                                <li v-if="cur>1"><a @click="cur--,pageClick()">previous</a></li>
+                                <li v-if="cur==1"><a class="banclick">previous</a></li>
+                                <li v-for="index in indexs" :class="{ 'active': cur == index}">
+                                    <a @click="btnClick(index)">{[ index ]}</a>
+                                </li>
+                                <li v-if="cur!=all"><a @click="cur++,pageClick()">next</a></li>
+                                <li v-if="cur == all"><a class="banclick">next</a></li>
+                                <li><a><i>{[ totalPage ]}</i> record  <i>{[ all ]}</i>pages</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="page">
+                            <div>
+
+
+                                {{ page }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+
+
+        App.data = function data() {
+            return {
+                all: {{pages}}, 
+                cur: {{cur}},
+                totalPage: {{total}},
+                keywords: "",
+                header: [
+                    {key: 'StageID', field: 'StageID', width: 85},
+                      {key: 'EventName', field: 'EventName', width: 140},
+                    {key: 'StageName', field: 'StageName', width: 110},
+                    {key: 'Location', field: 'Location', width: 160},
+                    {key: 'StageDate', field: 'StageDate', width: 110,sort:true},
+                    {key: 'Qualifying', field: 'Qualifying', width: 100},
+                    {key: 'PointsToQualify', field: 'PointsToQualify', width: 120},
+                    {key: 'TeamName', field: 'TeamName', width: 120},
+
+
+
+
+                ],
+                tableData: {{ tb |safe}},
+                idname:"StageID",
+                tablename:"event_stage"
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+       
+        App.methods = {
+
+
+
+
+
+            getRowKeys(row) {
+                return row.id
+            },
+
+            
+            serch() {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: 1
+
+                }
+                axios({
+                    url: '/admin/stagelistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+                        console.log(obj)
+                        that.tableData = obj.data['rs']
+                        that.alldata = obj.data['rsall']
+                        that.all = obj.data['pages'], 
+                            that.cur = obj.data['cur'],
+                            that.totalPage = obj.data['total']
+
+
+                    })
+
+            },
+
+
+            
+            dataListFn(index) {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: index
+
+                }
+
+                axios({
+                    url: '/admin/stagelistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+                        //console.log(obj)
+
+                        that.tableData = obj.data['rs']
+                        that.all = obj.data['pages'], 
+                            that.cur = obj.data['cur'],
+                            that.totalPage = obj.data['total']
+
+
+                    })
+            },
+            
+            btnClick(data) {
+                if (data != this.cur) {
+                    this.cur = data
+                }
+
+
+                this.dataListFn(this.cur.toString());
+            },
+            pageClick() {
+                
+                this.dataListFn(this.cur.toString());
+            }
+
+
+
+        }
+
+
+    </script>
+{% endblock %}

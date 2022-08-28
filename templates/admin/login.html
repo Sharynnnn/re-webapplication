@@ -1,0 +1,174 @@
+{% extends 'admin/base.html' %}
+
+{% block body %}
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden
+        }
+
+        body {
+            background: #1E9FFF;
+            background-image: url(/static/images/bg.jpeg);
+            background-size: cover;
+        }
+
+
+        .layui-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden
+        }
+
+        .admin-login-background {
+            width: 360px;
+            height: 300px;
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            margin-left: -180px;
+            margin-top: -100px;
+        }
+
+        .logo-title {
+            text-align: center;
+
+            padding: 14px 0;
+        }
+        .logo-title img{display: inline-block;width: 20px;height: 25px;vertical-align: middle;margin-right: 10px;}
+
+        .logo-title h1 {
+            color: #1E9FFF;
+            font-size: 20px;
+            font-weight: bold;
+            display: inline-block;
+            vertical-align: middle;
+            height: 30px;
+            line-height: 30px;
+
+        }
+
+        .login-form {
+            background-color: #fff;
+            border: 1px solid #fff;
+            border-radius: 3px;
+            padding: 14px 20px;
+            box-shadow: 0 0 8px #eeeeee;
+        }
+
+        .login-form .layui-form-item {
+            position: relative;
+        }
+
+        .login-form .layui-form-item label {
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            width: 38px;
+            line-height: 36px;
+            text-align: center;
+            color: #d2d2d2;
+        }
+
+        .login-form .layui-form-item input {
+            padding-left: 36px;
+        }
+
+
+        .captcha-img img {
+            height: 34px;
+            border: 1px solid #e6e6e6;
+            height: 36px;
+            width: 100%;
+        }
+    </style>
+
+    <div class="layui-container " style="" id="app">
+        <div class="admin-login-background">
+            <div class="layui-form login-form" style="border-radius: 20px;box-shadow: #acacac 1px 1px 20px;">
+                <form method="post" class="layui-form">
+
+
+                    <div class="layui-form-item logo-title">
+                        <h1>Athlete Management System </h1>
+                    </div>
+                    <div class="layui-form-item" style="text-align: center">
+
+                        <el-select v-model="username"  placeholder="Select User" size="small">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.value"
+      :value="item.value"
+    />
+  </el-select>
+                    </div>
+                    <div class="layui-form-item">
+
+                    </div>
+
+                    <div class="layui-form-item" style="text-align: center;margin-top: 40px;">
+                     <el-button type="primary" round size="small" @click="login('user')">User Login</el-button> <el-button type="primary" round size="small" @click="login('admin')">Admin Login</el-button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        App.data = function data() {
+            return {
+                username:"",
+               options : {{ userlist|safe }}
+            }
+        }
+        //init
+        App.mounted = function init() {
+
+        }
+        //method
+        App.methods = {
+
+
+            login(usertype) {
+                 var that = this;
+                if(usertype=="admin"){
+                    username="admin"
+                }
+                else {
+                    username=that.username;
+                }
+
+                        let params = {
+                            username: username
+                        }
+
+                        axios({
+                            url: '/api/login',
+                            method: 'post',
+                            data: params
+                        })
+                            .then(function (obj) {
+                                console.log(obj)
+                                if (obj.data.code==1){
+                                    window.location="/admin/index"
+                                }
+
+                            })
+
+
+
+            }
+        }
+
+
+
+
+    </script>
+
+
+
+{% endblock %}

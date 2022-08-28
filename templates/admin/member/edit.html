@@ -1,0 +1,111 @@
+{% extends "admin/base.html" %}
+{% block body %}
+    <body>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row">
+            <form class="layui-form">
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>Team
+                    </label>
+                    <div class="layui-input-inline">
+ <el-select style="width: 220px;" size="mini" v-model="datas.TeamID"
+                                           placeholder="select team">
+                                    <el-option
+                                            v-for="item in team"
+                                            :label="item.TeamName"
+                                            :value="item.TeamID">
+                                    </el-option>
+                                </el-select>
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>FirstName
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.FirstName" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>LastName
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.LastName" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+                 <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>Birthdate
+                    </label>
+                    <div class="layui-input-inline">
+<el-date-picker style="width: 160px;"
+        v-model="datas.Birthdate"
+        type="date"
+
+        size="mini"
+      />
+                    </div>
+                </div>
+                  <div class="layui-form-item">
+                    <label  class="layui-form-label">
+                        <span class="x-red">*</span>City
+                    </label>
+                    <div class="layui-input-inline">
+<el-input v-model="datas.City" size="mini" style="width: 160px;"></el-input>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="layui-form-item" style="margin-top: 50px;">
+                    <label for="L_repass" class="layui-form-label">
+                    </label>
+                    <div>
+                           <el-button type="primary" round size="mini" style="width: 80px;" @click="edit_one">
+                    save
+                </el-button>
+                <el-button type="warning" round size="mini" style="width: 80px;" @click="close">
+                    close
+                </el-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        App.data = function data() {
+            return {
+
+                datas: {{ datas|safe }},
+
+
+                team: {{team|safe}},
+                tablename:"members",
+                idname:"MemberID"
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+
+        //method
+        App.methods = {
+
+
+        }
+    </script>
+
+    </body>
+
+{% endblock %}

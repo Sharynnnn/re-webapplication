@@ -1,0 +1,199 @@
+{% extends "admin/base.html" %}
+{% block body %}
+    <style>
+        .title {
+            font-weight: bold;
+            font-size: 14px;
+            clear: both;
+            padding-left: 5px;
+            margin: 10px 0;
+        }
+
+        .row {
+            font-size: 12px;
+            padding-left: 10px;
+            line-height: 22px;
+            height: 22px;
+            min-width: 300px;
+        }
+
+        .row span {
+            display: inline-block;
+            margin: 0 5px;
+            text-align: left;
+        }
+        .nodata{text-align: center;line-height: 50px;font-size: 14px;color: #888;}
+    </style>
+    <div class="layui-fluid" id="app">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body ">
+                        <blockquote class="layui-elem-quote">Hello,
+                            <span class="x-red">{{ session.userinfo.FirstName }} {{ session.userinfo.LastName }}</span>！
+
+                            Login time:<span v-html='times'></span>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+
+
+
+            {% if session.userinfo.Type == 'admin' %}
+             <div class="layui-card">
+                    <div class="layui-card-header">Overview</div>
+                    <div class="layui-card-body ">
+                        <ul class="layui-row layui-col-space10 layui-this x-admin-carousel x-admin-backlog">
+                            {% for foo in datas %}
+                                <li class="layui-col-md3 layui-col-xs3">
+
+                                    <a  class="x-admin-backlog-body">
+                                        <h3>{{ foo.name }}</h3>
+                                        <p>
+                                            <cite>{{ foo.num }}</cite></p>
+                                    </a>
+                                </li>
+
+                            {% endfor %}
+
+
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="layui-card">
+                    <div class="layui-card-header" style="font-weight: bold;color: #3a8ee6;">Desktop</div>
+                    <div class="layui-card-body " id="contbox">
+                        <div class="column" style="min-width: 300px;">
+                            <div class="top">Upcoming Events & Stages</div>
+{% if events|count==0 %}<div class="nodata">No Data</div>{% endif %}
+
+                            {% for item in events %}
+                                <div>
+                                    <div class="title">{{ item.EventName }}</div>
+
+                                    {% for item2 in item.data %}
+                                        <div class="row"><span style="width: 70px">{{ item2.StageDate }}</span><span
+                                                style="width: 80px">{{ item2.StageName }}</span><span>{{ item2.Location }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                        <div class="column" style="min-width: 200px;">
+                            <div class="top">previous results</div>
+{% if result|count==0 %}<div class="nodata">No Data</div>{% endif %}
+                            {% for item in result %}
+
+                                <div>
+                                    <div class="title">{{ item.EventName }}</div>
+
+                                    {% for item2 in item.data %}
+                                        <div class="row"><span style="width: 70px">{{ item2.StageDate }}</span><span
+                                                style="width: 80px">{{ item2.StageName }}</span><span>{{ item2.PointsScored }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            {% endif %}
+            </div>
+            <style id="welcome_style"></style>
+
+        </div>
+    </div>
+    </div>
+
+    <script>
+
+        App.data = function data() {
+            return {
+                times: ""
+
+            }
+        }
+        //init
+        App.mounted = function init() {
+            this.getDate()
+        }
+
+
+        //method
+        App.methods = {
+
+            //date
+            getDate() {
+                //date gain
+                var date = new Date();
+
+                let ret;
+                var fmt = "YYYY-mm-dd HH:MM:SS";
+                const opt = {
+                    "Y+": date.getFullYear().toString(),        // year
+                    "m+": (date.getMonth() + 1).toString(),     // month
+                    "d+": date.getDate().toString(),            // day
+                    "H+": date.getHours().toString(),           // hours
+                    "M+": date.getMinutes().toString(),         // min
+                    "S+": date.getSeconds().toString()          // sec
+                    
+                };
+                for (let k in opt) {
+                    ret = new RegExp("(" + k + ")").exec(fmt);
+                    if (ret) {
+                        fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+                    }
+                    ;
+                }
+                ;
+
+                this.times = fmt;
+            }
+
+
+        }
+
+
+    </script>
+
+    <style>
+        #contbox {
+            padding: 2%;
+        }
+
+        #contbox .column {
+            width: 48%;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 5px;
+
+
+        }
+
+        #contbox .column ul {
+            display: block;
+            padding: 10px;
+        }
+
+        #contbox .column ul a {
+            color: #0a84ff;
+        }
+
+        #contbox .top {
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #efefef;
+            padding: 1px 10px;
+
+        }
+    </style>
+
+{% endblock %}

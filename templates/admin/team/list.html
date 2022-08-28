@@ -1,0 +1,235 @@
+
+{% extends "admin/base.html" %}
+{% block body %}
+
+
+    <div class="layui-fluid" id="app">
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body ">
+
+
+                    </div>
+                    <div class="layui-card-body">
+
+                        <div class="layui-inline layui-show-xs-block" style="margin-right: 5px;">
+{#                            <input type="text" name="username" id="username" placeholder="input team name"#}
+{#                                   autocomplete="off"#}
+{#                                   v-model="keywords"#}
+{#                                   class="layui-input" style="width: 180px;display: inline-block;margin-right: 5px;">#}
+
+{#                               <button class="layui-btn" @click="serch"><i class="layui-icon">&#xe615;</i>#}
+{#                            </button>#}
+                              <a class="layui-btn layui-btn-small" onclick="location.href='/admin/team_list?page=1'"
+                               title="rush">
+                                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+
+                            <button class="layui-btn" onclick="xadmin.open('add team','/admin/team_add',320,210)"><i
+                                class="layui-icon"></i>add team
+                        </button>
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+                        <div class="layui-show-xs-block layui-inline" style="margin-right: 5px;">
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="layui-card-body ">
+
+
+                            <el-table
+                                    :data="tableData"
+                                    :row-style="{height:45+'px'}"
+                                    :cell-style="{padding:1+'px'}"
+                                    size="mini"
+
+                                    :row-key="getRowKeys"
+                                    border>
+
+                                <template v-for="item in header">
+                                    <el-table-column :property="item.field"
+                                                     v-if="item.show" :label="item.key"
+                                                     align="center" :width="item.width" :show-overflow-tooltip='true'
+
+                                    >
+
+
+                                        <template #default="scope">
+                                            <span v-else> {[scope.row[scope.column.property]]} </span>
+
+                                        </template>
+
+                                    </el-table-column>
+
+
+                                </template>
+
+{#                                fixed="right"#}
+                                <el-table-column label=" " align="center"  min-width=220>
+                                    <template #default="scope">
+
+
+                                        <el-button
+                                                size="mini"
+                                                @click="handleEdit('edit','/admin/team_edit?id='+scope.row.TeamID,350,210)">edit
+                                        </el-button>
+                                        <el-button
+                                                size="mini"
+                                                type="danger"
+                                                :disabled="isdel"
+                                                @click="handleDelete(scope.$index,scope.row.TeamID);">delete
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
+
+                        </div>
+                        <!--分页-->
+                        <div class="page-bar">
+                            <ul>
+                                <li v-if="cur>1"><a @click="cur--,pageClick()">previous</a></li>
+                                <li v-if="cur==1"><a class="banclick">previous</a></li>
+                                <li v-for="index in indexs" :class="{ 'active': cur == index}">
+                                    <a @click="btnClick(index)">{[ index ]}</a>
+                                </li>
+                                <li v-if="cur!=all"><a @click="cur++,pageClick()">next</a></li>
+                                <li v-if="cur == all"><a class="banclick">next</a></li>
+                                <li><a><i>{[ totalPage ]}</i> record  <i>{[ all ]}</i>pages</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="layui-card-body ">
+                        <div class="page">
+                            <div>
+
+
+                                {{ page }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+
+
+        App.data = function data() {
+            return {
+                all: {{pages}}, //总页数
+                cur: {{cur}},//当前页码
+                totalPage: {{total}},//当前条数
+                keywords: "",
+                header: [
+                    {key: 'TeamID', field: 'TeamID', width: 105, show: 'true'},
+                    {key: 'TeamName', field: 'TeamName', width: 135, show: 'true'},
+
+
+
+                ],
+                tableData: {{ tb |safe}},
+                idname:"teamID",
+                tablename:"teams"
+
+
+
+            }
+        }
+        App.mounted = function init() {
+
+        }
+
+        //方法
+        App.methods = {
+
+
+
+
+
+            getRowKeys(row) {
+                return row.id
+            },
+
+            //搜索
+            serch() {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: 1
+
+                }
+                axios({
+                    url: '/admin/teamlistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+
+                        that.tableData = obj.data['rs']
+                        that.alldata = obj.data['rsall']
+                        that.all = obj.data['pages'], //总页数
+                            that.cur = obj.data['cur'],//当前页码
+                            that.totalPage = obj.data['total']//当前条数
+
+
+                    })
+
+            },
+
+
+            //请求数据
+            dataListFn(index) {
+                var that = this
+                let params = {
+                    keywords: this.keywords,
+                    page: index
+
+                }
+
+                axios({
+                    url: '/admin/userlistjson',
+                    method: 'post',
+                    data: params
+                })
+                    .then(function (obj) {
+                        //console.log(obj)
+
+                        that.tableData = obj.data['rs']
+                        that.all = obj.data['pages'], //总页数
+                            that.cur = obj.data['cur'],//当前页码
+                            that.totalPage = obj.data['total']//当前条数
+
+
+                    })
+            },
+            //分页
+            btnClick(data) {//页码点击事件
+                if (data != this.cur) {
+                    this.cur = data
+                }
+
+//根据点击页数请求数据
+                this.dataListFn(this.cur.toString());
+            },
+            pageClick() {
+                //根据点击页数请求数据
+                this.dataListFn(this.cur.toString());
+            }
+
+
+
+        }
+
+
+    </script>
+{% endblock %}
